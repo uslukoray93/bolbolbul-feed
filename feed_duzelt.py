@@ -25,11 +25,17 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from kategori_eslesme import KATEGORI_ESLESME
 
-FEED_URL = "https://www.bolbolbul.com/XMLExport/BA918F11DDC3401B96250C67B4238889"
+FEED_URL = "https://www.bolbolbul.com/XMLExport/7A041F8F4AEC48D8A7E878A0FCC7CD1D"
 
 # ---- Kargo kurali ----
 # Bu tutar ve uzerindeki urunlerde kargo bedava (0 TL) olarak isaretlenir.
 UCRETSIZ_KARGO_ESIGI = 1000.0
+
+# Test/deneme urunleri: basligi bu kaliplardan birine uyanlar feed disi.
+# (Ticimax panelinde acik kalan deneme kayitlari Google'a gitmesin)
+TEST_URUN_KALIPLARI = re.compile(
+    r'\b(deneme|test [uü]r[uü]n|[oö]rnek [uü]r[uü]n|dummy|xxx|sil(inecek)?)\b',
+    re.IGNORECASE)
 
 # Gercek marka olmayan, jenerik/yedek parca markalari:
 # bunlarda GTIN/MPN guvenilir degil -> identifier_exists=no
@@ -116,7 +122,7 @@ def main():
     cikti, atlanan, sayac = [], [], {
         'kategori_eslesti': 0, 'kategori_bos': 0, 'installment_silindi': 0,
         'kargo_bedava': 0, 'kargo_ucretli': 0, 'aciklama_temizlendi': 0,
-        'stoksuz_atlandi': 0, 'ident_no': 0,
+        'stoksuz_atlandi': 0, 'ident_no': 0, 'test_atlandi': 0,
     }
 
     for it in items:
@@ -135,6 +141,12 @@ def main():
             eksik = [a for a, v in (('id', pid), ('title', baslik), ('link', link),
                                     ('image_link', resim), ('price', fiyat)) if not v]
             atlanan.append((pid or '?', baslik[:40], 'eksik: ' + ','.join(eksik)))
+            continue
+
+        # --- test/deneme urunu mu ---
+        if TEST_URUN_KALIPLARI.search(baslik):
+            atlanan.append((pid, baslik[:40], 'test/deneme urunu'))
+            sayac['test_atlandi'] += 1
             continue
 
         if stok not in ('in stock', 'out of stock', 'preorder', 'backorder'):
@@ -248,6 +260,7 @@ def main():
     print(f"  Kategori eslesti        : {sayac['kategori_eslesti']}")
     print(f"  Kategori bos (oto)      : {sayac['kategori_bos']}")
     print(f"  installment silindi     : {sayac['installment_silindi']}")
+    print(f"  Test/deneme atlandi     : {sayac['test_atlandi']}")
     print(f"  Kargo BEDAVA (>={UCRETSIZ_KARGO_ESIGI:.0f} TL): {sayac['kargo_bedava']}")
     print(f"  Kargo ucretli           : {sayac['kargo_ucretli']}")
     print(f"  Aciklama HTML temizlendi: {sayac['aciklama_temizlendi']}")
