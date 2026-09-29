@@ -105,6 +105,9 @@ def main():
     ap.add_argument('--cikti', default='google-feed.xml')
     ap.add_argument('--stoksuz-cikar', action='store_true',
                     help='out of stock urunleri feed disi birak')
+    ap.add_argument('--gorsel-kayit', default=None,
+                    help='gorsel_buyut.py kaydi (_kayit.json): kucuk gorseller '
+                         'buyutulmus surumleriyle degistirilir')
     args = ap.parse_args()
 
     if args.girdi:
@@ -117,12 +120,24 @@ def main():
     print(f"  {len(ham)/1024/1024:.1f} MB okundu")
 
     items = re.findall(r'<item>.*?</item>', ham, re.S)
-    print(f"  {len(items)} urun bulundu\n")
+    print(f"  {len(items)} urun bulundu")
+
+    gorsel_kayit = {}
+    if args.gorsel_kayit and os.path.exists(args.gorsel_kayit):
+        import json as _json
+        try:
+            gorsel_kayit = {k: v for k, v in
+                            _json.load(open(args.gorsel_kayit, encoding='utf-8')).items() if v}
+            print(f"  {len(gorsel_kayit)} buyutulmus gorsel kaydi yuklendi")
+        except Exception as e:
+            print(f"  UYARI: gorsel kaydi okunamadi ({e})")
+    print()
 
     cikti, atlanan, sayac = [], [], {
         'kategori_eslesti': 0, 'kategori_bos': 0, 'installment_silindi': 0,
         'kargo_bedava': 0, 'kargo_ucretli': 0, 'aciklama_temizlendi': 0,
         'stoksuz_atlandi': 0, 'ident_no': 0, 'test_atlandi': 0,
+        'gorsel_buyutuldu': 0,
     }
 
     for it in items:
@@ -193,6 +208,14 @@ def main():
         if '<g:installment>' in it:
             sayac['installment_silindi'] += 1
 
+        # --- buyutulmus gorsel varsa onu kullan ---
+        resim_ham = html.unescape(resim)
+        if resim_ham in gorsel_kayit:
+            resim = gorsel_kayit[resim_ham]
+            sayac['gorsel_buyutuldu'] += 1
+        else:
+            resim = resim_ham
+
         # --- ek gorseller (max 10, ana gorselle ayni olanlar haric) ---
         ekler, gorulen = [], {resim}
         for u in tum_alanlar(it, 'additional_image_link'):
@@ -208,7 +231,7 @@ def main():
         p.append(f'      <g:title>{escape(baslik[:150])}</g:title>')
         p.append(f'      <g:description>{escape(acik)}</g:description>')
         p.append(f'      <g:link>{escape(html.unescape(link))}</g:link>')
-        p.append(f'      <g:image_link>{escape(html.unescape(resim))}</g:image_link>')
+        p.append(f'      <g:image_link>{escape(resim)}</g:image_link>')
         for u in ekler:
             p.append(f'      <g:additional_image_link>{escape(u)}</g:additional_image_link>')
         p.append(f'      <g:availability>{stok}</g:availability>')
@@ -232,7 +255,6 @@ def main():
         cikti.append('\n'.join(p))
 
     simdi = datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S +0000')
-    import os
     hedef_klasor = os.path.dirname(os.path.abspath(args.cikti))
     os.makedirs(hedef_klasor, exist_ok=True)
     with open(args.cikti, 'w', encoding='utf-8') as f:
@@ -261,6 +283,7 @@ def main():
     print(f"  Kategori bos (oto)      : {sayac['kategori_bos']}")
     print(f"  installment silindi     : {sayac['installment_silindi']}")
     print(f"  Test/deneme atlandi     : {sayac['test_atlandi']}")
+    print(f"  Gorsel buyutuldu (800px): {sayac['gorsel_buyutuldu']}")
     print(f"  Kargo BEDAVA (>={UCRETSIZ_KARGO_ESIGI:.0f} TL): {sayac['kargo_bedava']}")
     print(f"  Kargo ucretli           : {sayac['kargo_ucretli']}")
     print(f"  Aciklama HTML temizlendi: {sayac['aciklama_temizlendi']}")

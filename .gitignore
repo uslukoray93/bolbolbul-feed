@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
-yayin/
 feed.log
 google-feed.xml
 google-feed.yedek.xml
 google-feed.yeni.xml
+yayin/

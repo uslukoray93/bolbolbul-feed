@@ -35,6 +35,25 @@ jobs:
         run: |
           python3 promosyon_uret.py --cikti yayin/promosyonlar.xml
 
+      - name: ImageMagick kur
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq imagemagick
+
+      - name: Kucuk gorselleri buyut
+        run: |
+          # Onceki calismalardan kalan gorseller ve kayit dosyasi (varsa) geri yuklenir
+          mkdir -p yayin/img
+          if [ -d gorseller ]; then cp -a gorseller/. yayin/img/ 2>/dev/null || true; fi
+          python3 gorsel_buyut.py \
+            --feed   yayin/google-feed.xml \
+            --klasor yayin/img \
+            --taban  "https://uslukoray93.github.io/bolbolbul-feed/img" \
+            --limit  ${{ vars.GORSEL_LIMIT || '50' }}
+
+      - name: Feed'i buyutulmus gorsellerle yeniden uret
+        run: |
+          python3 feed_duzelt.py --cikti yayin/google-feed.xml --stoksuz-cikar \
+            --gorsel-kayit yayin/img/_kayit.json
+
       - name: Dogrula
         run: |
           python3 - <<'PY'
@@ -89,7 +108,9 @@ jobs:
           } > durum/son-calisma.txt
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add durum/son-calisma.txt
+          mkdir -p gorseller
+          cp -a yayin/img/. gorseller/ 2>/dev/null || true
+          git add durum/son-calisma.txt gorseller
           git diff --staged --quiet || git commit -m "feed guncellendi [skip ci]"
           git push
 
