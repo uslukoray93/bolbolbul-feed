@@ -75,10 +75,66 @@ jobs:
         id: yayinla
         uses: actions/deploy-pages@v4
 
-      - name: Ozet
+      - name: Depoya iz birak (60 gun kurali)
         run: |
-          echo "### Feed guncellendi" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- Urun: $(grep -c '<item>' yayin/google-feed.xml)" >> $GITHUB_STEP_SUMMARY
-          echo "- Boyut: $(du -h yayin/google-feed.xml | cut -f1)" >> $GITHUB_STEP_SUMMARY
-          echo "- URL: ${{ steps.yayinla.outputs.page_url }}google-feed.xml" >> $GITHUB_STEP_SUMMARY
+          mkdir -p durum
+          {
+            echo "son_calisma: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "urun_sayisi: $(grep -c '<item>' yayin/google-feed.xml)"
+            echo "boyut: $(du -h yayin/google-feed.xml | cut -f1)"
+          } > durum/son-calisma.txt
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add durum/son-calisma.txt
+          git diff --staged --quiet || git commit -m "feed guncellendi [skip ci]"
+          git push
+
+      - name: Canli feed kontrolu
+        run: |
+          URL="${{ steps.yayinla.outputs.page_url }}google-feed.xml"
+          echo "Kontrol ediliyor: $URL"
+          # Pages'in yayilmasi icin 30 sn bekle, 5 deneme
+          for i in 1 2 3 4 5; do
+            sleep 30
+            KOD=$(curl -sL -o canli.xml -w '%{http_code}' "$URL" || echo 000)
+            echo "  deneme $i -> HTTP $KOD"
+            [ "$KOD" = "200" ] && break
+          done
+          python3 - <<'PY'
+          import os, sys, email.utils
+          from datetime import datetime, timezone
+          import xml.etree.ElementTree as ET
+
+          f = 'canli.xml'
+          if not os.path.exists(f) or os.path.getsize(f) < 1000:
+              print('HATA: Canli feed indirilemedi'); sys.exit(1)
+
+          ch = ET.parse(f).getroot().find('channel')
+          adet = len(ch.findall('item'))
+          tarih = ch.findtext('lastBuildDate')
+          uretim = email.utils.parsedate_to_datetime(tarih)
+          yas = (datetime.now(timezone.utc) - uretim).total_seconds() / 3600
+
+          print(f'  Urun     : {adet}')
+          print(f'  Uretim   : {tarih}')
+          print(f'  Yas      : {yas:.1f} saat')
+
+          if adet < 4000:
+              print(f'HATA: Canli feedde sadece {adet} urun var'); sys.exit(1)
+          if yas > 72:
+              print(f'HATA: Feed {yas/24:.1f} gundur guncellenmemis (limit 3 gun)'); sys.exit(1)
+          print('  DURUM    : saglikli')
+          PY
+
+      - name: Ozet
+        if: always()
+        run: |
+          if [ -f yayin/google-feed.xml ]; then
+            echo "### Feed guncellendi" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- Urun: $(grep -c '<item>' yayin/google-feed.xml)" >> $GITHUB_STEP_SUMMARY
+            echo "- Boyut: $(du -h yayin/google-feed.xml | cut -f1)" >> $GITHUB_STEP_SUMMARY
+            echo "- URL: ${{ steps.yayinla.outputs.page_url }}google-feed.xml" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Feed URETILEMEDI - eski feed yayinda kaliyor" >> $GITHUB_STEP_SUMMARY
+          fi
