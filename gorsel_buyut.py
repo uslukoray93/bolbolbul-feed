@@ -89,6 +89,8 @@ def main():
     ap.add_argument('--klasor', required=True, help='buyutulmus gorsellerin klasoru')
     ap.add_argument('--taban',  required=True, help='gorsellerin yayin URL tabani')
     ap.add_argument('--limit',  type=int, default=0, help='0=sinirsiz (test icin 50)')
+    ap.add_argument('--filtre', default=None,
+                    help='sadece basliginda bu metin gecen urunleri isle (ornek: zeytin)')
     args = ap.parse_args()
 
     os.makedirs(args.klasor, exist_ok=True)
@@ -105,8 +107,13 @@ def main():
     for it in re.findall(r'<item>.*?</item>', d, re.S):
         u = re.search(r'<g:image_link>(.*?)</g:image_link>', it, re.S)
         i = re.search(r'<g:id>(\d+)</g:id>', it)
-        if u and i:
-            urunler.append((i.group(1), u.group(1).strip()))
+        if not (u and i):
+            continue
+        if args.filtre:
+            t = re.search(r'<g:title>(.*?)</g:title>', it, re.S)
+            if not t or args.filtre.lower() not in t.group(1).lower():
+                continue
+        urunler.append((i.group(1), u.group(1).strip()))
 
     print(f"Feed: {len(urunler)} urun")
 
