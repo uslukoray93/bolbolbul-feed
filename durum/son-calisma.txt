@@ -1,3 +1,3 @@
-son_calisma: 2026-09-29 08:45:21 UTC
-urun_sayisi: 5755
-boyut: 12M
+son_calisma: 2026-09-29 09:32:50 UTC
+urun_sayisi: 5754
+boyut: 13M
