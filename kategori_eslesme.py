@@ -1,172 +1,220 @@
 # -*- coding: utf-8 -*-
 """
 bolbolbul.com product_type -> Google Product Taxonomy ID eslemesi
-147 kategorinin tamami elle eslendi.
-Kaynak: Google product taxonomy (TR), https://support.google.com/merchants/answer/6324436
+
+TUM ID'LER RESMI LISTEDEN DOGRULANDI:
+https://www.google.com/basepages/producttype/taxonomy-with-ids.tr-TR.txt
+(Google_Product_Taxonomy_Version: 2021-09-21)
+
+Dogrulama: python3 kategori_dogrula.py
 """
 
 KATEGORI_ESLESME = {
-    # ---- Su motorlari / pompalar -> 1837 Hardware > Plumbing > Water Pumps
-    "Elektrikli Su Motoru": 1837,
-    "Su Motoru Parçaları": 1837,
-    "Benzinli Su Motoru": 1837,
-    "Dizel Su Motoru": 1837,
-    "Su Motoru ve Pompalar": 1837,
-    "İlaçlama Pompası": 1837,
+    # ---- Su motorlari / pompalar
+    # 500102 Hirdavat > Techizat Pompalari > Laginn, Kanalizasyon ve Atik Su Pompalari
+    "Elektrikli Su Motoru": 500102,
+    "Su Motoru Parçaları": 500102,
+    "Benzinli Su Motoru": 500102,
+    "Dizel Su Motoru": 500102,
+    "Su Motoru ve Pompalar": 500102,
 
-    # ---- Zincirli testere / agac kesme -> 3103 Hardware > Tools > Chainsaws
-    "Ağaç Kesme Makinesi Parçaları": 3103,
-    "Benzinli Ağaç Kesme Makinesi": 3103,
-    "Akülü Ağaç Kesme Makinesi": 3103,
-    "Elektrikli Ağaç Kesme Makinesi": 3103,
-    "Ağaç Kesme Makinesi": 3103,
-    "Benzinli Ağaç Budama Makinesi": 3103,
-    "Akülü Ağaç Budama Makinesi": 3103,
-    "Akülü Budama Makinesi Parçaları": 3103,
-    "Budama Testeresi": 3103,
-    "Zincir Bileme Makinesi": 3103,
+    # ---- Zincirli testere / agac kesme
+    # 3610 Ev ve Bahce > Cim ve Bahce > Elektrikli Bahce Ekipmanlari > Zincirli Testereler
+    "Benzinli Ağaç Kesme Makinesi": 3610,
+    "Akülü Ağaç Kesme Makinesi": 3610,
+    "Elektrikli Ağaç Kesme Makinesi": 3610,
+    "Ağaç Kesme Makinesi": 3610,
+    "Benzinli Ağaç Budama Makinesi": 3610,
+    "Akülü Ağaç Budama Makinesi": 3610,
+    # 4565 ... > Elektrikli Bahce Ekipman Aksesuarlari > Zincirli Testere Aksesuarlari
+    "Ağaç Kesme Makinesi Parçaları": 4565,
+    "Akülü Budama Makinesi Parçaları": 4565,
+    "Zincir Bileme Makinesi": 4565,
 
-    # ---- Tirpan / cim kenari -> 6318 Home&Garden > Lawn&Garden > Outdoor Power Equipment > String Trimmers
-    "Motorlu Tırpan Parçaları": 6318,
-    "Benzinli Tırpan": 6318,
-    "Akülü Tırpan": 6318,
-    "Elektrikli Tırpan": 6318,
+    # ---- Tirpan (yabanci ot temizleme)
+    # 1223 Ev ve Bahce > Cim ve Bahce > Elektrikli Bahce Ekipmanlari > Yabanci Ot Temizleme Makineleri
+    "Benzinli Tırpan": 1223,
+    "Akülü Tırpan": 1223,
+    "Elektrikli Tırpan": 1223,
+    "Motorlu Tırpan Parçaları": 4566,   # Cim Bicme Makinesi Aksesuarlari
 
-    # ---- Cim bicme -> 6317 Lawn Mowers
-    "Çim Biçme Makinesi Parçaları": 6317,
-    "Benzinli Çim Biçme Makinesi": 6317,
-    "Elektrikli Çim Biçme Makinesi": 6317,
-    "Akülü Çim Biçme Makinesi": 6317,
-    "Çim Biçme Makinesi": 6317,
-    "Benzinli Çayır Biçme Makinesi": 6317,
-    "Dizel Çayır Biçme Makinesi": 6317,
-    "Çayır Biçme Makinesi Parçaları": 6317,
+    # ---- Cim bicme
+    # 6789 ... > Elektrikli Bahce Ekipmanlari > Vakumlu Cim Bicme Makineleri
+    "Benzinli Çim Biçme Makinesi": 6789,
+    "Elektrikli Çim Biçme Makinesi": 6789,
+    "Akülü Çim Biçme Makinesi": 6789,
+    "Çim Biçme Makinesi": 6789,
+    "Benzinli Çayır Biçme Makinesi": 6789,
+    "Dizel Çayır Biçme Makinesi": 6789,
+    # 4566 ... > Elektrikli Bahce Ekipman Aksesuarlari > Cim Bicme Makinesi Aksesuarlari
+    "Çim Biçme Makinesi Parçaları": 4566,
+    "Çayır Biçme Makinesi Parçaları": 4566,
 
-    # ---- Motorlar / guc aleti parcalari -> 1361 Hardware > Tools > Power Tool Parts & Accessories
-    "4 Zamanlı Motorlar": 1361,
-    "2 Zamanlı Motorlar": 1361,
+    # ---- Motorlar / elektrikli bahce ekipmani (ust kategori)
+    # 3798 Ev ve Bahce > Cim ve Bahce > Elektrikli Bahce Ekipmanlari
+    "4 Zamanlı Motorlar": 3798,
+    "2 Zamanlı Motorlar": 3798,
+    "Karıştırıcılar": 3798,
+    "Elektrikli Vinç": 3798,
+    "Bahçe Makineleri": 3798,
 
-    # ---- Toprak isleme / capa -> 3878 Home&Garden > Lawn&Garden > Outdoor Power Equipment > Tillers
-    "Çapa Makinesi Parçaları": 3878,
-    "Benzinli Çapa Makinesi": 3878,
-    "Dizel Çapa Makinesi": 3878,
-    "Çapa Makinesi": 3878,
-    "Benzinli Toprak Havalandırma Makinesi": 3878,
-    "Elektrikli Toprak Havalandırma Makinesi": 3878,
+    # ---- Toprak isleme / capa
+    # 2204 ... > Elektrikli Fidan Dikme ve Tohum Atma Makineleri
+    "Benzinli Çapa Makinesi": 2204,
+    "Dizel Çapa Makinesi": 2204,
+    "Çapa Makinesi": 2204,
+    "Çapa Makinesi Parçaları": 2204,
+    "Benzinli Toprak Havalandırma Makinesi": 2204,
+    "Elektrikli Toprak Havalandırma Makinesi": 2204,
+    "Fide Dikici ve Sökücü": 2204,
+    "Toprak Burgu Makinesi": 2204,
+    "Toprak Burgu Parçaları": 2204,
+    "Toprak Delme Aparatı": 2204,
 
-    # ---- Ilaclama / pulverizator -> 6967 Home&Garden > Lawn&Garden > Watering&Irrigation > Sprayers
-    "İlaçlama Makinesi Parçaları": 6967,
-    "Benzinli İlaçlama Makinesi": 6967,
-    "Akülü İlaçlama Makinesi": 6967,
-    "Elektrikli İlaçlama Makinesi": 6967,
+    # ---- Ilaclama (bahce sulama/purkurtme)
+    # 3568 Ev ve Bahce > Cim ve Bahce > Sulama ve Tarimsal Sulama
+    "Benzinli İlaçlama Makinesi": 3568,
+    "Akülü İlaçlama Makinesi": 3568,
+    "Elektrikli İlaçlama Makinesi": 3568,
+    "İlaçlama Makinesi Parçaları": 3568,
+    "İlaçlama Pompası": 3568,
+    "Sprey Besin Solüsyonu": 3568,
+    "Hortum ve Toplama Ürünleri": 2313,   # Bahce Hortumlari
+    "Hortum Bağlantıları": 4718,          # Bahce Hortumu Baglanti Parcalari ve Vanalari
+    "Fıskiyeler": 7561,                   # Bahce Sulayicilar ve Kafalari
+    "Su Zamanlayıcı": 1302,               # Sprinkler Kumandalari
 
-    # ---- Jenerator -> 1233 Hardware > Power & Electrical Supplies > Generators
-    "Jeneratör Parçaları": 1233,
-    "Benzinli Jeneratör": 1233,
-    "Dizel Jeneratör": 1233,
-    "İnverter": 1233,
+    # ---- Jenerator
+    # 1218 Hirdavat > Elektrik Sarf Malzemeleri > Jeneratorler
+    "Benzinli Jeneratör": 1218,
+    "Dizel Jeneratör": 1218,
+    "İnverter": 1218,
+    "Jeneratör Parçaları": 4709,          # Jenerator Aksesuarlari
 
-    # ---- Budama makasi -> 3568 Home&Garden > Lawn&Garden > Garden Tools > Pruning Shears
-    "Budama Makası": 3568,
-    "Akülü Ağaç Budama Makası": 3568,
-    "Aşı Makası": 3568,
+    # ---- Budama makasi / bahce el aletleri
+    # 3841 ... > Bahcecilik > Bahce Aletleri > Budama Makaslari
+    "Budama Makası": 3841,
+    "Akülü Ağaç Budama Makası": 3841,
+    "Aşı Makası": 3841,
+    "Çim Çit Makası": 3841,
+    "Budama Testeresi": 6967,             # Budama Testereleri
+    "Hasat Bıçakları": 505292,            # Bahce Oraklari ve Palalari
+    "Çapa, Kazma, Kürek": 4000,           # Ekme Bicme Aletleri
+    "Tırmık ve Dirgen": 3071,             # Bahce Tirmiklari
+    "Bahçe Seti": 3173,                   # Bahce Aletleri
+    "Çöp Toplama Aparatı": 3173,
+    "Odun Taşıma Aleti": 3616,            # El Arabalari
+    "Gübre": 3828,                        # Gubre Serpme Makineleri
 
-    # ---- Hayvancilik / sagim -> 3568 yok; 505288 Business&Industrial > Agriculture > Livestock Supplies
-    "Sağım Makinesi Aksesuarları": 505288,
-    "Süt Sağma Makinesi": 505288,
-    "Koyun Kırkma Makinesi": 505288,
-    "Otomatik Hayvan Sulukları": 505288,
-    "Elektrikli Çit Sistemleri": 505288,
-    "Yem Hazırlama Makinesi": 505288,
+    # ---- Cit kesme
+    # 3120 ... > Elektrikli Bahce Ekipmanlari > Cit Budama Makineleri
+    "Benzinli Çit Kesme Makinesi": 3120,
+    "Akülü Çit Kesme Makinesi": 3120,
+    "Elektrikli Çit Kesme Makinesi": 3120,
+    "Çit Kesme Makinesi Parçaları": 3120,
 
-    # ---- Hasat makineleri -> 1298 Business&Industrial > Agriculture > Agricultural Machinery
-    "Zeytin Hasat Makinesi": 1298,
-    "Hasat Makinesi Parçaları": 1298,
-    "Ceviz Hasat Makinesi": 1298,
-    "Çay Toplama Makinesi": 1298,
-    "Hasat Makinesi": 1298,
-    "Bitki Bağlama Makinesi": 1298,
-    "Fide Dikici ve Sökücü": 1298,
-    "Bahçe Makineleri": 1298,
+    # ---- Yaprak ufleme
+    # 3340 ... > Elektrikli Bahce Ekipmanlari > Yaprak Ufleme Makineleri
+    "Benzinli Yaprak Toplama Üfleme Makinesi": 3340,
+    "Akülü Yaprak Toplama Üfleme Makinesi": 3340,
+    "Elektrikli Yaprak Toplama Üfleme Makinesi": 3340,
+    "Yaprak Toplama Üfleme Makinesi": 3340,
+    "Yaprak Toplama Üfleme Parçaları": 3340,
 
-    # ---- Tekne -> 1130 Sporting Goods > Outdoor Recreation > Boating > Boat Parts
+    # ---- Dal ogutme / kar kureme
+    "Benzinli Yaprak Dal Öğütme Makinesi": 3798,
+    "Elektrikli Yaprak Dal Öğütme Makinesi": 3798,
+    "Yaprak Dal Öğütme Makinesi": 3798,
+    "Dal Öğütme Makinesi Parçaları": 3798,
+    "Kar Küreme Makinesi": 1541,          # Kar Ufleme Makineleri
+
+    # ---- Hayvancilik
+    # 6990 Is ve Endustri > Tarim > Hayvancilik > Ciftlik Hayvani Yemlikleri ve Suluklari
+    "Otomatik Hayvan Sulukları": 6990,
+    "Sağım Makinesi Aksesuarları": 6990,
+    "Süt Sağma Makinesi": 6990,
+    "Koyun Kırkma Makinesi": 6990,
+    "Yem Hazırlama Makinesi": 6990,
+    "Elektrikli Çit Sistemleri": 6990,
+
+    # ---- Hasat makineleri (bahce el aletleri ust)
+    "Zeytin Hasat Makinesi": 3173,
+    "Hasat Makinesi Parçaları": 3173,
+    "Ceviz Hasat Makinesi": 3173,
+    "Çay Toplama Makinesi": 3173,
+    "Hasat Makinesi": 3173,
+    "Bitki Bağlama Makinesi": 3173,
+
+    # ---- Tekne
+    # 1130 Tasitlar ve Parcalar > Tasitlar > Jetski > Kisisel Jetski
     "Tekne Motoru Parçaları": 1130,
     "Tekne Motoru": 1130,
     "Tekne ve Yat Malzemeleri": 1130,
 
-    # ---- Aku / sarj -> 2978 Electronics > Electronics Accessories > Power > Battery Chargers
+    # ---- Aku / sarj
+    # 2978 Elektronik > Elektronik Alet Aksesuarlari > Guc > Yakit Pilleri
     "Akü ve Şarj Aletleri": 2978,
 
-    # ---- Matkap -> 1187 Hardware > Tools > Drills
-    "Matkaplar": 1187,
-    "Akülü Vidalama": 1187,
-    "Toprak Burgu Parçaları": 1187,
-    "Toprak Burgu Makinesi": 1187,
-    "Toprak Delme Aparatı": 1187,
-    "Karot Makinesi": 1187,
+    # ---- Matkap / vidalama
+    # 1217 Hirdavat > Aletler > Matkaplar
+    "Matkaplar": 1217,
+    "Akülü Vidalama": 1217,
+    "Karot Makinesi": 1217,
 
-    # ---- Yaprak ufleme -> 6790 Home&Garden > Lawn&Garden > Outdoor Power Equipment > Leaf Blowers
-    "Yaprak Toplama Üfleme Parçaları": 6790,
-    "Benzinli Yaprak Toplama Üfleme Makinesi": 6790,
-    "Akülü Yaprak Toplama Üfleme Makinesi": 6790,
-    "Elektrikli Yaprak Toplama Üfleme Makinesi": 6790,
-    "Yaprak Toplama Üfleme Makinesi": 6790,
+    # ---- Testere
+    # 1235 Hirdavat > Aletler > Testereler
+    "Ahşap ve Metal Kesme": 1235,
+    "Beton Kesme Makinesi": 1235,
+    "Daire Testere": 3224,                # Dairesel El Testereleri
+    "Dekupaj Testere": 3725,              # Dekupaj Testereleri
+    "Tilki Kuyruğu": 3594,                # El Testereleri
 
-    # ---- Dal ogutme -> 6273 Home&Garden > Lawn&Garden > Outdoor Power Equipment > Chippers
-    "Benzinli Yaprak Dal Öğütme Makinesi": 6273,
-    "Elektrikli Yaprak Dal Öğütme Makinesi": 6273,
-    "Yaprak Dal Öğütme Makinesi": 6273,
-    "Dal Öğütme Makinesi Parçaları": 6273,
+    # ---- Kesici / makas
+    # 1180 Hirdavat > Aletler > Kesiciler
+    "Metal Kesme Makası": 1180,
+    "Yan Keski": 1180,
+    "Kargaburun": 1180,
+    "Pense": 1180,
 
-    # ---- Is ayakkabisi -> 187 Apparel&Accessories > Shoes
-    "İş Ayakkabısı": 187,
-    "Bahçıvan Şapka &amp; Bere &amp; Eldiven": 167,  # Apparel > Clothing Accessories
+    # ---- Kirici / cekic
+    # 1186 Hirdavat > Aletler > Cekicler
+    "Kırıcı Delici ve Kırıcı": 505364,    # Elektrikli Cekicler
+    "Çekiç ve Balyoz": 1186,
+    "Çivi ve Zımba Çakma": 1186,
+    "Balta ve Nacak": 1171,               # Baltalar
 
-    # ---- Balta / nacak -> 1236 Hardware > Tools > Axes
-    "Balta ve Nacak": 1236,
-    "Odun Taşıma Aleti": 1236,
+    # ---- Taslama / zimpara / polisaj
+    "Taşlamalar": 1219,                   # Taslama Makineleri
+    "Zımpara Makinesi": 1188,             # Zimpara Makineleri
+    "El Zımparası": 4419,                 # Zimpara Bloklari
+    "Polisaj Makinesi": 1188,
 
-    # ---- Taslama / zimpara -> 1235 Hardware > Tools > Grinders / 1242 Sanders
-    "Taşlamalar": 1235,
-    "Zımpara Makinesi": 1242,
-    "El Zımparası": 1242,
-    "Polisaj Makinesi": 1242,
+    # ---- Diger el aletleri
+    "Tornavida": 1203,                    # Tornavidalar
+    "Somun Sıkma Makineleri": 1195,       # Lokma Uclu Tornavidalar
+    "Anahtar Takımı": 6965,               # El Aleti Takimlari
+    "Diğer El Aletleri": 1167,            # Hirdavat > Aletler
+    "Perçin": 1167,
+    "Pafta Makinesi": 1167,
+    "Kontrol Kalemi": 1167,
+    "Planyalar": 1187,                    # El Planyalari
+    "Freze": 5587,                        # Cok Islevli Elektrikli Aletler
+    "Boya Tabancaları": 5587,
+    "Sıcak Hava Tabancası": 5587,
 
-    # ---- Cit kesme -> 6788 Home&Garden > Lawn&Garden > Outdoor Power Equipment > Hedge Trimmers
-    "Çit Kesme Makinesi Parçaları": 6788,
-    "Benzinli Çit Kesme Makinesi": 6788,
-    "Akülü Çit Kesme Makinesi": 6788,
-    "Elektrikli Çit Kesme Makinesi": 6788,
-    "Çim Çit Makası": 6788,
+    # ---- Olcum
+    # 1305 Hirdavat > Aletler > Olcum Aletleri ve Sensorler
+    "Lazer Ölçüm Cihazı": 1305,
+    "Su Terazisi": 1305,
+    "Şerit Metre": 1305,
 
-    # ---- Sulama / hortum -> 2802 Home&Garden > Lawn&Garden > Watering&Irrigation > Garden Hoses
-    "Hortum ve Toplama Ürünleri": 2802,
-    "Hortum Bağlantıları": 2802,
-    "Fıskiyeler": 2802,
-    "Su Zamanlayıcı": 2802,
-    "Sprey Besin Solüsyonu": 6967,
+    # ---- Diger guc aletleri
+    "Hava Kompresörü": 2015,              # Kompresorler
+    "Kaynak Makinesi": 1238,              # Kaynak Tabancalari ve Plazma Kesme
+    "Basınçlı Yıkama Makinesi": 1226,     # Basincli Yikama Makineleri
 
-    # ---- Kesme / testere -> 1235 Saws family
-    "Ahşap ve Metal Kesme": 1218,   # Hardware > Tools > Saws
-    "Beton Kesme Makinesi": 1218,
-    "Dekupaj Testere": 1218,
-    "Tilki Kuyruğu": 1218,
-    "Daire Testere": 1218,
-    "Metal Kesme Makası": 1167,     # Hardware > Tools > Cutters
-    "Hasat Bıçakları": 1167,
-
-    # ---- Kirici / delici -> 1180 Hardware > Tools > Hammers (Demolition)
-    "Kırıcı Delici ve Kırıcı": 1180,
-    "Çekiç ve Balyoz": 1180,
-    "Çivi ve Zımba Çakma": 1180,
-
-    # ---- El aletleri / bahce -> 3173 Home&Garden > Lawn&Garden > Garden Tools
-    "Çapa, Kazma, Kürek": 3173,
-    "Tırmık ve Dirgen": 3173,
-    "Bahçe Seti": 3173,
-    "Çöp Toplama Aparatı": 3173,
-
-    # ---- Gida isleme makineleri -> 730 Home&Garden > Kitchen&Dining > Kitchen Appliances
+    # ---- Gida isleme
+    # 730 Ev ve Bahce > Mutfak ve Yemek > Mutfak Aletleri
     "Meyve Kurutma Makinesi": 730,
     "Meyve Pres Makinesi": 730,
     "Meyve Dilimleme Makinesi": 730,
@@ -177,37 +225,11 @@ KATEGORI_ESLESME = {
     "Airfryer &amp; Fritözler": 730,
     "Vakumlu Paketleme Makinesi": 730,
 
-    # ---- El aletleri (tornavida/pense vb) -> 1209 Hardware > Tools > Hand Tools family
-    "Somun Sıkma Makineleri": 1215,   # Wrenches
-    "Tornavida": 1216,                # Screwdrivers
-    "Pense": 1214,                    # Pliers
-    "Kargaburun": 1214,
-    "Yan Keski": 1214,
-    "Anahtar Takımı": 1215,
-    "Diğer El Aletleri": 1209,
-    "Perçin": 1209,
-    "Pafta Makinesi": 1209,
-    "Kontrol Kalemi": 1209,
+    # ---- Giyim
+    "İş Ayakkabısı": 187,                 # Giyim ve Aksesuar > Ayakkabi
+    "Bahçıvan Şapka &amp; Bere &amp; Eldiven": 167,  # Giyim Aksesuarlari
 
-    # ---- Olcum -> 1305 Hardware > Tools > Measuring Tools & Sensors
-    "Lazer Ölçüm Cihazı": 1305,
-    "Su Terazisi": 1305,
-    "Şerit Metre": 1305,
-
-    # ---- Diger guc aletleri
-    "Hava Kompresörü": 1226,      # Hardware > Tools > Air Compressors
-    "Kaynak Makinesi": 1244,      # Hardware > Tools > Welding Equipment
-    "Basınçlı Yıkama Makinesi": 3242,  # Pressure Washers
-    "Karıştırıcılar": 1361,
-    "Boya Tabancaları": 1361,
-    "Sıcak Hava Tabancası": 1361,
-    "Planyalar": 1361,
-    "Freze": 1361,
-    "Elektrikli Vinç": 1361,
-    "Kar Küreme Makinesi": 6791,  # Snow Blowers
-
-    # ---- Kimyasal / bakim
-    "Bahçe Makine Yağları": 2620,   # Vehicles&Parts > Vehicle Maintenance > Fluids&Chemicals
-    "Gübre": 2985,                  # Home&Garden > Lawn&Garden > Fertilizers
-    "Köpek Kırkma Makinesi": 2975,  # Animals&Pet Supplies > Pet Grooming
+    # ---- Bakim / kimyasal
+    "Bahçe Makine Yağları": 2820,         # Motorlu Tasit Motor Parcalari
+    "Köpek Kırkma Makinesi": 2975,        # Kozmetik Aletleri
 }
