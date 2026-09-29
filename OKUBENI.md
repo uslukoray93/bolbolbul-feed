@@ -18,6 +18,8 @@ Her gün otomatik çalışır, güncel feed'i yayınlar.
 | 7 | Bozuk/eksik ürünler | Atlanır, log'a yazılır |
 | 8 | Kaynak feed çökerse | Eski feed korunur (güvenlik kontrolü) |
 | 9 | Stokta olmayan ürünler | Feed dışı bırakılır (varsayılan **açık**) |
+| 10 | Kargo bedava | 1000 TL ve üzeri → `0.00 TRY` (eşik: `UCRETSIZ_KARGO_ESIGI`) |
+| 11 | 6 taksit | Ayrı promosyon feed'i — bkz. `PROMOSYON-KURULUM.md` |
 
 **Not:** "Yerel envanter verileri eksik" hatası feed'le ilgili DEĞİL —
 Merchant Center → Eklentiler'den "Ücretsiz yerel listelemeler"i kaldırman gerekiyor.

@@ -27,6 +27,10 @@ from kategori_eslesme import KATEGORI_ESLESME
 
 FEED_URL = "https://www.bolbolbul.com/XMLExport/BA918F11DDC3401B96250C67B4238889"
 
+# ---- Kargo kurali ----
+# Bu tutar ve uzerindeki urunlerde kargo bedava (0 TL) olarak isaretlenir.
+UCRETSIZ_KARGO_ESIGI = 1000.0
+
 # Gercek marka olmayan, jenerik/yedek parca markalari:
 # bunlarda GTIN/MPN guvenilir degil -> identifier_exists=no
 JENERIK_MARKALAR = {
@@ -111,8 +115,8 @@ def main():
 
     cikti, atlanan, sayac = [], [], {
         'kategori_eslesti': 0, 'kategori_bos': 0, 'installment_silindi': 0,
-        'kargo_duzeltildi': 0, 'aciklama_temizlendi': 0, 'stoksuz_atlandi': 0,
-        'ident_no': 0,
+        'kargo_bedava': 0, 'kargo_ucretli': 0, 'aciklama_temizlendi': 0,
+        'stoksuz_atlandi': 0, 'ident_no': 0,
     }
 
     for it in items:
@@ -160,14 +164,20 @@ def main():
             sayac['ident_no'] += 1
 
         # --- kargo ---
-        kargo_ham = None
-        ksec = re.search(r'<g:shipping>(.*?)</g:shipping>', it, re.S)
-        if ksec:
-            kf = re.search(r'<g:price>(.*?)</g:price>', ksec.group(1), re.S)
-            if kf:
-                kargo_ham = fiyat_normalize(kf.group(1))
-        if kargo_ham:
-            sayac['kargo_duzeltildi'] += 1
+        # Esik ve uzeri -> bedava (0.00 TRY). Altinda -> kaynaktaki tutar.
+        fiyat_sayi = float(fiyat.split()[0])
+        if fiyat_sayi >= UCRETSIZ_KARGO_ESIGI:
+            kargo_ham = '0.00 TRY'
+            sayac['kargo_bedava'] += 1
+        else:
+            kargo_ham = None
+            ksec = re.search(r'<g:shipping>(.*?)</g:shipping>', it, re.S)
+            if ksec:
+                kf = re.search(r'<g:price>(.*?)</g:price>', ksec.group(1), re.S)
+                if kf:
+                    kargo_ham = fiyat_normalize(kf.group(1))
+            if kargo_ham:
+                sayac['kargo_ucretli'] += 1
         if '<g:installment>' in it:
             sayac['installment_silindi'] += 1
 
@@ -238,7 +248,8 @@ def main():
     print(f"  Kategori eslesti        : {sayac['kategori_eslesti']}")
     print(f"  Kategori bos (oto)      : {sayac['kategori_bos']}")
     print(f"  installment silindi     : {sayac['installment_silindi']}")
-    print(f"  Kargo TRY+country eklendi: {sayac['kargo_duzeltildi']}")
+    print(f"  Kargo BEDAVA (>={UCRETSIZ_KARGO_ESIGI:.0f} TL): {sayac['kargo_bedava']}")
+    print(f"  Kargo ucretli           : {sayac['kargo_ucretli']}")
     print(f"  Aciklama HTML temizlendi: {sayac['aciklama_temizlendi']}")
     print(f"  identifier_exists=no    : {sayac['ident_no']}")
     print("=" * 62)

@@ -31,6 +31,10 @@ jobs:
         run: |
           python3 feed_duzelt.py --cikti yayin/google-feed.xml --stoksuz-cikar
 
+      - name: Promosyon feed uret
+        run: |
+          python3 promosyon_uret.py --cikti yayin/promosyonlar.xml
+
       - name: Dogrula
         run: |
           python3 - <<'PY'
@@ -134,7 +138,8 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "- Urun: $(grep -c '<item>' yayin/google-feed.xml)" >> $GITHUB_STEP_SUMMARY
             echo "- Boyut: $(du -h yayin/google-feed.xml | cut -f1)" >> $GITHUB_STEP_SUMMARY
-            echo "- URL: ${{ steps.yayinla.outputs.page_url }}google-feed.xml" >> $GITHUB_STEP_SUMMARY
+            echo "- Urun feed: ${{ steps.yayinla.outputs.page_url }}google-feed.xml" >> $GITHUB_STEP_SUMMARY
+            echo "- Promosyon feed: ${{ steps.yayinla.outputs.page_url }}promosyonlar.xml" >> $GITHUB_STEP_SUMMARY
           else
             echo "### Feed URETILEMEDI - eski feed yayinda kaliyor" >> $GITHUB_STEP_SUMMARY
           fi
