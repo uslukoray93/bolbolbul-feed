@@ -47,7 +47,8 @@ jobs:
             --feed   yayin/google-feed.xml \
             --klasor yayin/img \
             --taban  "https://uslukoray93.github.io/bolbolbul-feed/img" \
-            --limit  ${{ vars.GORSEL_LIMIT || '50' }}
+            --limit  ${{ vars.GORSEL_LIMIT || '50' }} \
+            ${{ vars.GORSEL_FILTRE && format('--filtre {0}', vars.GORSEL_FILTRE) || '' }}
 
       - name: Feed'i buyutulmus gorsellerle yeniden uret
         run: |
