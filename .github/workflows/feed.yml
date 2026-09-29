@@ -1,0 +1,84 @@
+name: Feed Guncelle
+
+# Her gun 04:00 (Turkiye saati) = 01:00 UTC
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:        # "Run workflow" butonuyla elle de calistirilabilir
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: feed
+  cancel-in-progress: false
+
+jobs:
+  uret:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu al
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Feed uret
+        run: |
+          python3 feed_duzelt.py --cikti yayin/google-feed.xml --stoksuz-cikar
+
+      - name: Dogrula
+        run: |
+          python3 - <<'PY'
+          import re, sys, os, xml.etree.ElementTree as ET
+          f = 'yayin/google-feed.xml'
+          ET.parse(f)                                   # XML gecerli mi
+          d = open(f, encoding='utf-8').read()
+          adet = d.count('<item>')
+
+          kontrol = [
+            ('out of stock kalmadi',     '<g:availability>out of stock</g:availability>' not in d),
+            ('installment kalmadi',      '<g:installment>' not in d),
+            ('TR-format fiyat kalmadi',  not re.search(r'<g:price>[\d.]+,\d\d', d)),
+            ('fiyatlar TRY birimli',     len(re.findall(r'<g:price>[\d]+\.\d\d TRY</g:price>', d)) == d.count('<g:price>')),
+            ('kategoriler sayisal ID',   not re.search(r'<g:google_product_category>[^\d<]', d)),
+            ('aciklamada HTML yok',      '&lt;div' not in d and '&lt;span' not in d),
+          ]
+          hata = False
+          for ad, ok in kontrol:
+              print(('  OK   ' if ok else '  HATA ') + ad)
+              hata |= not ok
+
+          if adet < 4000:
+              print(f'  HATA  Sadece {adet} urun var (min 4000)')
+              hata = True
+
+          print(f'\n  Urun: {adet}  |  Boyut: {os.path.getsize(f)/1024/1024:.1f} MB')
+          if hata:
+              print('\nDOGRULAMA BASARISIZ - eski feed korunacak')
+              sys.exit(1)
+          PY
+
+      - name: GitHub Pages yapilandir
+        uses: actions/configure-pages@v5
+
+      - name: Dosyalari yukle
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: yayin
+
+      - name: Yayinla
+        id: yayinla
+        uses: actions/deploy-pages@v4
+
+      - name: Ozet
+        run: |
+          echo "### Feed guncellendi" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Urun: $(grep -c '<item>' yayin/google-feed.xml)" >> $GITHUB_STEP_SUMMARY
+          echo "- Boyut: $(du -h yayin/google-feed.xml | cut -f1)" >> $GITHUB_STEP_SUMMARY
+          echo "- URL: ${{ steps.yayinla.outputs.page_url }}google-feed.xml" >> $GITHUB_STEP_SUMMARY
