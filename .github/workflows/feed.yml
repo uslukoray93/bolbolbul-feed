@@ -18,6 +18,7 @@ concurrency:
 jobs:
   uret:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     steps:
       - name: Kodu al
         uses: actions/checkout@v4
