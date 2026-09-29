@@ -145,11 +145,13 @@ KATEGORI_ESLESME = {
     "Hasat Makinesi": 3173,
     "Bitki Bağlama Makinesi": 3173,
 
-    # ---- Tekne
-    # 1130 Tasitlar ve Parcalar > Tasitlar > Jetski > Kisisel Jetski
-    "Tekne Motoru Parçaları": 1130,
-    "Tekne Motoru": 1130,
-    "Tekne ve Yat Malzemeleri": 1130,
+    # ---- Tekne (PARCA - tasitin kendisi DEGIL)
+    # 1130 "Kisisel Jetski" idi -> Google "tasit satiyorsun" diye reddetti.
+    # 3391 Tasitlar ve Parcalar > Tasit Parcalari ve Aksesuarlar >
+    #      Su Jetli Tekne Parcalari ve Aksesuarlari
+    "Tekne Motoru Parçaları": 3391,
+    "Tekne Motoru": 3391,
+    "Tekne ve Yat Malzemeleri": 3391,
 
     # ---- Aku / sarj
     # 2978 Elektronik > Elektronik Alet Aksesuarlari > Guc > Yakit Pilleri
