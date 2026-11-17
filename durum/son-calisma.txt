@@ -1,3 +1,3 @@
-son_calisma: 2026-11-16 07:51:40 UTC
-urun_sayisi: 5712
+son_calisma: 2026-11-17 08:59:50 UTC
+urun_sayisi: 5729
 boyut: 13M
